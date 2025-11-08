@@ -1,10 +1,19 @@
+import Constants from "expo-constants";
 import { AppState, Platform } from "react-native";
 import "react-native-url-polyfill/auto";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient, processLock } from "@supabase/supabase-js";
 
-const supabaseUrl = "YOUR_REACT_NATIVE_SUPABASE_URL;";
-const supabaseAnonKey = "YOUR_REACT_NATIVE_SUPABASE_PUBLISHABLE_KEY;";
+// prefer values provided via Expo's app config extra (app.config.js / app.json)
+const expoExtra = (Constants.expoConfig && (Constants.expoConfig.extra as any)) || {};
+const supabaseUrl = expoExtra.SUPABASE_URL ?? process.env.SUPABASE_URL;
+const supabaseAnonKey = expoExtra.SUPABASE_KEY ?? process.env.SUPABASE_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "SUPABASE_URL and SUPABASE_KEY are required. Add them to app.config.js (extra) or supply them to the environment."
+  );
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
