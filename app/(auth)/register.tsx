@@ -1,17 +1,17 @@
+import * as ImagePicker from "expo-image-picker";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  View,
+  ActivityIndicator,
+  Image,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
-  ScrollView,
-  ActivityIndicator,
+  View,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { z } from "zod";
-import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { z } from "zod";
 
 import { supabase, uploadImage } from "@/lib/supabase";
 
@@ -130,7 +130,7 @@ export default function Register() {
   };
 
   return (
-    <SafeAreaView className="justify-center flex-1 min-h-screen bg-slate-900">
+    <SafeAreaView className="justify-center flex-1 min-h-screen bg-black">
       <ScrollView contentContainerStyle={{ padding: 24 }}>
         <View className="items-center">
           {/* <AppAuthHeader /> */}
@@ -164,7 +164,7 @@ export default function Register() {
             onChangeText={setName}
             placeholder="Your name"
             placeholderTextColor="#94a3b8"
-            className="px-4 py-3 text-white bg-slate-800 rounded-xl"
+            className="px-4 py-3 text-white border-white border-[0.8px] rounded-xl"
           />
           {errors.name ? (
             <Text className="mt-2 text-red-400">{errors.name}</Text>
@@ -178,7 +178,7 @@ export default function Register() {
             autoCapitalize="none"
             placeholder="you@example.com"
             placeholderTextColor="#94a3b8"
-            className="px-4 py-3 text-white bg-slate-800 rounded-xl"
+            className="px-4 py-3 text-white rounded-xl border-white border-[0.8px]"
           />
           {errors.email ? (
             <Text className="mt-2 text-red-400">{errors.email}</Text>
@@ -191,7 +191,7 @@ export default function Register() {
             secureTextEntry
             placeholder="Choose a password"
             placeholderTextColor="#94a3b8"
-            className="px-4 py-3 text-white bg-slate-800 rounded-xl"
+            className="px-4 py-3 text-white border-white border-[0.8px] rounded-xl"
           />
           {errors.password ? (
             <Text className="mt-2 text-red-400">{errors.password}</Text>

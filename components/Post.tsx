@@ -3,7 +3,11 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import React, { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import Avatar from "./Avatar";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 dayjs.extend(relativeTime);
 
 export type PostProps = {
@@ -15,8 +19,6 @@ export type PostProps = {
   created_at: string | number | Date;
 };
 
-// Using dayjs with the relativeTime plugin for readable timestamps
-
 export default function Post({
   authorName,
   authorAvatar,
@@ -24,7 +26,7 @@ export default function Post({
   image_url,
   created_at,
 }: PostProps) {
-  const time = dayjs(created_at).fromNow();
+  const time = dayjs.utc(created_at).local().fromNow();
   const [contentWidth, setContentWidth] = useState<number>(0);
   const [imageHeight, setImageHeight] = useState<number | null>(null);
 
@@ -49,9 +51,9 @@ export default function Post({
   }, [image_url, contentWidth]);
 
   return (
-    <View className="w-full px-4 py-3 pb-4 border-b bg-slate-900 border-slate-800">
+    <View className="w-full px-4 py-3 pb-4 bg-black border-b border-slate-800">
       <View className="flex-row items-start gap-3">
-        <Avatar uri={authorAvatar ?? undefined} />
+        <Avatar uri={authorAvatar ?? undefined} size={50} />
         <View
           className="flex-1"
           onLayout={(e) => {

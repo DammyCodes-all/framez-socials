@@ -12,6 +12,6 @@ export default function Index() {
     })();
   }, []);
   return (
-    <View className="flex-col items-center justify-center min-h-screen bg-slate-900"></View>
+    <View className="flex-col items-center justify-center min-h-screen bg-black"></View>
   );
 }

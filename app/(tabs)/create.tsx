@@ -1,20 +1,20 @@
 import Avatar from "@/components/Avatar";
 import { useAuth } from "@/components/context";
+import { supabase, uploadImage } from "@/lib/supabase";
 import { Feather } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
-  TouchableOpacity,
-  View,
+  ActivityIndicator,
+  Image,
   Text,
   TextInput,
-  Image,
-  ActivityIndicator,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ImageType } from "../(auth)/register";
-import * as ImagePicker from "expo-image-picker";
-import { supabase, uploadImage } from "@/lib/supabase";
 
 export type PostType = {
   image_url: string | null;
@@ -32,7 +32,6 @@ const Create = () => {
   useEffect(() => {
     if (!image?.uri || !contentWidth) return;
     let mounted = true;
-    // clear previous measurement while we compute the new one
     setImageHeight(null);
     Image.getSize(
       image.uri,
@@ -112,8 +111,8 @@ const Create = () => {
     }
   };
   return (
-    <SafeAreaView>
-      <View className="flex-col w-full min-h-screen gap-2 px-4 bg-slate-900">
+    <SafeAreaView className="bg-black">
+      <View className="flex-col w-full min-h-screen gap-2 px-4 bg-black">
         <View className="flex-row items-center justify-between mt-5">
           <TouchableOpacity onPress={() => router.back()}>
             <Feather name="x" color={"white"} size={30} />
@@ -121,11 +120,12 @@ const Create = () => {
 
           <TouchableOpacity
             onPress={handlePostSubmit}
-            disabled={caption.trim().length === 0 || submitting}
+            disabled={(caption.trim().length === 0 && !image) || submitting}
             style={{
               backgroundColor:
-                caption.trim().length === 0 ? "#94a3b8" : "#1DA1F2",
-              opacity: caption.trim().length === 0 || submitting ? 0.6 : 1,
+                caption.trim().length === 0 && !image ? "#94a3b8" : "#1DA1F2",
+              opacity:
+                (caption.trim().length === 0 && !image) || submitting ? 0.6 : 1,
             }}
             className="flex items-center justify-center px-4 py-1 rounded-full h-fit w-fit"
           >
@@ -156,7 +156,6 @@ const Create = () => {
                 paddingVertical: 8,
                 paddingHorizontal: 12,
                 color: "#fff",
-                backgroundColor: "#0f172a",
                 borderRadius: 12,
               }}
               className="text-xl"
@@ -179,7 +178,6 @@ const Create = () => {
             className="relative w-full"
             onLayout={(e) => {
               const w = e.nativeEvent.layout.width;
-              // avoid unnecessary updates
               if (w && w !== contentWidth) setContentWidth(w);
             }}
           >

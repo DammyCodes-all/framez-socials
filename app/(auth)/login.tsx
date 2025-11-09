@@ -1,16 +1,16 @@
+import { AppAuthHeader } from "@/components/AppAuthHeader";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  ActivityIndicator,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
+  View,
 } from "react-native";
-import { AppAuthHeader } from "@/components/AppAuthHeader";
-import { useRouter } from "expo-router";
-import { supabase } from "@/lib/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
-import z from "zod";
+import { z } from "zod";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email format"),
@@ -52,20 +52,20 @@ export default function Auth() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-900 px-6">
-      <View className="flex-1 justify-center">
+    <SafeAreaView className="flex-1 px-6 bg-black">
+      <View className="justify-center flex-1">
         <View className="items-center">
           <AppAuthHeader />
-          <Text className="text-white text-2xl font-bold mt-6">
+          <Text className="mt-6 text-2xl font-bold text-white">
             Sign in to Framez
           </Text>
-          <Text className="text-slate-400 mt-2">
+          <Text className="mt-2 text-slate-400">
             Welcome back — sign in to continue
           </Text>
         </View>
 
         <View className="mt-8">
-          <Text className="text-slate-300 mb-2">Email</Text>
+          <Text className="mb-2 text-slate-300">Email</Text>
           <TextInput
             value={email}
             onChangeText={(text) => {
@@ -76,49 +76,49 @@ export default function Auth() {
             autoCapitalize="none"
             placeholder="you@example.com"
             placeholderTextColor="#94a3b8"
-            className="bg-slate-800 rounded-xl px-4 py-3 text-white"
+            className="px-4 py-3 text-white border-white border-[0.8px] rounded-xl "
           />
 
-          <Text className="text-slate-300 mt-4 mb-2">Password</Text>
+          <Text className="mt-4 mb-2 text-slate-300">Password</Text>
           <TextInput
             value={password}
             onChangeText={setPassword}
             secureTextEntry
             placeholder="Your password"
             placeholderTextColor="#94a3b8"
-            className="bg-slate-800 rounded-xl px-4 py-3 text-white"
+            className="px-4 py-3 text-white border-white border-[0.8px] rounded-xl"
           />
 
           <TouchableOpacity
             onPress={signInWithEmail}
             activeOpacity={0.8}
-            className="mt-6 bg-white rounded-full py-3 items-center"
+            className="items-center py-3 mt-6 bg-white rounded-full"
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color="#0f172a" />
             ) : (
-              <Text className="text-slate-900 font-bold">Sign in</Text>
+              <Text className="font-bold text-slate-900">Sign in</Text>
             )}
           </TouchableOpacity>
 
           <View className="flex-row items-center my-6">
             <View className="flex-1 h-px bg-slate-700" />
-            <Text className="text-slate-500 px-4">OR</Text>
+            <Text className="px-4 text-slate-500">OR</Text>
             <View className="flex-1 h-px bg-slate-700" />
           </View>
 
-          <View className="mt-6 flex-row justify-center">
+          <View className="flex-row justify-center mt-6">
             <Text className="text-slate-400">New to Framez? </Text>
             <TouchableOpacity
               onPress={() => router.push("/(auth)/register")}
               activeOpacity={0.8}
             >
-              <Text className="text-white font-bold">Create an account</Text>
+              <Text className="font-bold text-white">Create an account</Text>
             </TouchableOpacity>
           </View>
           {errorMsg ? (
-            <Text className="text-red-400 mt-3 text-center">{errorMsg}</Text>
+            <Text className="mt-3 text-center text-red-400">{errorMsg}</Text>
           ) : null}
         </View>
       </View>

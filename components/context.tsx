@@ -6,6 +6,7 @@ import React, {
 } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { router } from "expo-router";
 
 type AuthProps = {
   user: User | null;
@@ -94,6 +95,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    router.push("/");
   };
 
   const value = {
