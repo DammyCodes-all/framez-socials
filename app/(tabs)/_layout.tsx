@@ -1,7 +1,48 @@
 import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import type { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
+
+function CreateTabButton({
+  onPress,
+  accessibilityRole,
+  accessibilityState,
+  accessibilityLabel,
+  testID,
+}: BottomTabBarButtonProps) {
+  const focused = accessibilityState?.selected;
+  return (
+    <TouchableOpacity
+      testID={testID}
+      accessibilityRole={accessibilityRole}
+      accessibilityState={accessibilityState}
+      accessibilityLabel={accessibilityLabel}
+      activeOpacity={0.85}
+      onPress={onPress}
+      style={{
+        position: "absolute",
+        top: -28,
+        alignSelf: "center",
+        width: 72,
+        height: 72,
+        borderRadius: 36,
+        backgroundColor: "#1DA1F2",
+        alignItems: "center",
+        justifyContent: "center",
+        shadowColor: "#0f172a",
+        shadowOpacity: 0.35,
+        shadowOffset: { width: 0, height: 6 },
+        shadowRadius: 12,
+        elevation: 12,
+        borderWidth: focused ? 2 : 0,
+        borderColor: focused ? "rgba(255,255,255,0.6)" : "transparent",
+      }}
+    >
+      <Feather name="plus" size={28} color="#fff" />
+    </TouchableOpacity>
+  );
+}
 
 export default function Layout() {
   return (
@@ -37,6 +78,14 @@ export default function Layout() {
               </Text>
             </View>
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="create"
+        options={{
+          title: "Create",
+          tabBarShowLabel: false,
+          tabBarButton: (props) => <CreateTabButton {...props} />,
         }}
       />
       <Tabs.Screen

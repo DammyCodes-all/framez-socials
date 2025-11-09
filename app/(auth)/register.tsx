@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { z } from "zod";
@@ -19,7 +20,7 @@ const registerSchema = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
-const dummyImageUrl =
+export const dummyImageUrl =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7csvPWMdfAHEAnhIRTdJKCK5SPK4cHfskow&s";
 
 export type ImageType = {
@@ -34,8 +35,11 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [image, setImage] = useState<ImageType>();
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   async function validateAndContinue() {
+    setSubmitError(null);
     const result = registerSchema.safeParse({ name, email, password });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -59,8 +63,8 @@ export default function Register() {
         console.error("Image upload failed:", error);
         if (error && typeof error === "object" && "message" in error) {
           console.error("Image upload error:", error.message);
-          return dummyImageUrl;
         }
+        return null;
       }
     } else {
       return dummyImageUrl;
@@ -68,8 +72,13 @@ export default function Register() {
   };
 
   const handleRegister = async () => {
+    setSubmitting(true);
+    setSubmitError(null);
     try {
       const imageUrl = await handleImageUpload();
+      if (!imageUrl) {
+        throw new Error("Failed to upload image. Please try again.");
+      }
       console.log("Registering user with image URL:", imageUrl);
       const { data: user, error } = await supabase.auth.signUp({
         email,
@@ -88,7 +97,13 @@ export default function Register() {
       else router.replace("/(tabs)/feed");
     } catch (error) {
       console.error("Registration error:", error);
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.";
+      setSubmitError(message);
     }
+    setSubmitting(false);
   };
 
   const pickImage = async () => {
@@ -185,10 +200,20 @@ export default function Register() {
           <TouchableOpacity
             onPress={async () => await validateAndContinue()}
             activeOpacity={0.8}
+            disabled={submitting}
             className="items-center py-3 mt-6 bg-white rounded-full"
+            style={{ opacity: submitting ? 0.6 : 1 }}
           >
-            <Text className="font-bold text-slate-900">Create account</Text>
+            {submitting ? (
+              <ActivityIndicator color="#0f172a" />
+            ) : (
+              <Text className="font-bold text-slate-900">Create account</Text>
+            )}
           </TouchableOpacity>
+
+          {submitError ? (
+            <Text className="mt-4 text-center text-red-400">{submitError}</Text>
+          ) : null}
 
           <View className="flex-row justify-center mt-6">
             <Text className="text-slate-400">Already have an account? </Text>
