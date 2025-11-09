@@ -5,35 +5,38 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Alert,
   ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { z } from "zod";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { supabase, uploadImage } from "@/lib/supabase";
+
 const registerSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  image: z.string().optional(),
 });
-import { supabase, uploadImage } from "@/lib/supabase";
-import { th } from "zod/v4/locales";
-
 const dummyImageUrl =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7csvPWMdfAHEAnhIRTdJKCK5SPK4cHfskow&s";
+
+export type ImageType = {
+  uri: string;
+  type: string;
+};
 
 export default function Register() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<ImageType>();
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   async function validateAndContinue() {
-    const result = registerSchema.safeParse({ name, email, password, image });
+    const result = registerSchema.safeParse({ name, email, password });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
@@ -43,24 +46,31 @@ export default function Register() {
       setErrors(fieldErrors);
       return;
     }
+    console.log("All inputs are valid. Proceeding with registration...");
     setErrors({});
     await handleRegister();
   }
   const handleImageUpload = async () => {
     if (image) {
       try {
-        const image_url = await uploadImage(image, email);
+        const image_url = await uploadImage(email, image);
         return image_url;
       } catch (error) {
-        console.error("Image upload error:", error);
-        return dummyImageUrl;
+        console.error("Image upload failed:", error);
+        if (error && typeof error === "object" && "message" in error) {
+          console.error("Image upload error:", error.message);
+          return dummyImageUrl;
+        }
       }
+    } else {
+      return dummyImageUrl;
     }
   };
 
   const handleRegister = async () => {
     try {
       const imageUrl = await handleImageUpload();
+      console.log("Registering user with image URL:", imageUrl);
       const { data: user, error } = await supabase.auth.signUp({
         email,
         password,
@@ -97,7 +107,10 @@ export default function Register() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage({
+        uri: result.assets[0].uri,
+        type: result.assets[0].type ?? "jpeg",
+      });
     }
   };
 
@@ -120,7 +133,7 @@ export default function Register() {
         <View className="flex flex-col gap-2 w-full justify-center items-center mt-6">
           <TouchableOpacity onPress={pickImage}>
             <Image
-              src={image ? image : dummyImageUrl}
+              src={image ? image.uri : dummyImageUrl}
               className="w-24 h-24 rounded-full"
             />
           </TouchableOpacity>
@@ -170,7 +183,7 @@ export default function Register() {
           ) : null}
 
           <TouchableOpacity
-            onPress={validateAndContinue}
+            onPress={async () => await validateAndContinue()}
             activeOpacity={0.8}
             className="mt-6 bg-white rounded-full py-3 items-center"
           >

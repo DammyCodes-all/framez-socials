@@ -45,5 +45,6 @@
       "typedRoutes": true,
       "reactCompiler": true
     }
+    // "permissions" : ["Read"]
   }
 }
