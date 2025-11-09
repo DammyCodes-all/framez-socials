@@ -47,23 +47,24 @@ if (Platform.OS !== "web") {
 export async function uploadImage(userId: string, image: ImageType) {
   try {
     const base64 = await FileSystem.readAsStringAsync(image.uri, {
-      encoding: "base64",
+      encoding: FileSystem.EncodingType.Base64,
     });
-    const filePath = `${userId}/${new Date().getTime()}`;
-    const contentType = image.type ? image.type : "image/jpeg";
+    const arraybuffer = decode(base64);
+    const filePath = `${userId}/${new Date().getTime()}.jpeg`;
+    // const contentType = image.type ? image.type : "image/jpeg";
     const { error } = await supabase.storage
-      .from("posts")
-      .upload(filePath, decode(base64), {
+      .from("images")
+      .upload(filePath, arraybuffer, {
         cacheControl: "3600",
         upsert: false,
-        contentType: contentType,
+        contentType: "image/jpeg",
       });
 
     if (error) throw error;
 
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from("posts")
+      .from("images")
       .getPublicUrl(filePath);
     const publicUrl = urlData.publicUrl;
     return publicUrl;

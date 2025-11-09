@@ -115,47 +115,47 @@ export default function Register() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-900 justify-center min-h-screen">
+    <SafeAreaView className="justify-center flex-1 min-h-screen bg-slate-900">
       <ScrollView contentContainerStyle={{ padding: 24 }}>
         <View className="items-center">
           {/* <AppAuthHeader /> */}
-          <Text className="text-white text-4xl font-bold mt-6">
+          <Text className="mt-6 text-4xl font-bold text-white">
             Welcome to Framez!
           </Text>
-          <Text className="text-white text-2xl font-bold mt-2">
+          <Text className="mt-2 text-2xl font-bold text-white">
             Create your account
           </Text>
-          <Text className="text-slate-400 mt-2 text-center">
+          <Text className="mt-2 text-center text-slate-400">
             Join Framez — add your name, avatar and sign up
           </Text>
         </View>
 
-        <View className="flex flex-col gap-2 w-full justify-center items-center mt-6">
+        <View className="flex flex-col items-center justify-center w-full gap-2 mt-6">
           <TouchableOpacity onPress={pickImage}>
             <Image
               src={image ? image.uri : dummyImageUrl}
               className="w-24 h-24 rounded-full"
             />
           </TouchableOpacity>
-          <Text className="text-slate-400 mt-2">
+          <Text className="mt-2 text-slate-400">
             Tap to select profile image
           </Text>
         </View>
 
         <View className="mt-8">
-          <Text className="text-slate-300 mb-2">Display name</Text>
+          <Text className="mb-2 text-slate-300">Display name</Text>
           <TextInput
             value={name}
             onChangeText={setName}
             placeholder="Your name"
             placeholderTextColor="#94a3b8"
-            className="bg-slate-800 rounded-xl px-4 py-3 text-white"
+            className="px-4 py-3 text-white bg-slate-800 rounded-xl"
           />
           {errors.name ? (
-            <Text className="text-red-400 mt-2">{errors.name}</Text>
+            <Text className="mt-2 text-red-400">{errors.name}</Text>
           ) : null}
 
-          <Text className="text-slate-300 mt-4 mb-2">Email</Text>
+          <Text className="mt-4 mb-2 text-slate-300">Email</Text>
           <TextInput
             value={email}
             onChangeText={setEmail}
@@ -163,37 +163,37 @@ export default function Register() {
             autoCapitalize="none"
             placeholder="you@example.com"
             placeholderTextColor="#94a3b8"
-            className="bg-slate-800 rounded-xl px-4 py-3 text-white"
+            className="px-4 py-3 text-white bg-slate-800 rounded-xl"
           />
           {errors.email ? (
-            <Text className="text-red-400 mt-2">{errors.email}</Text>
+            <Text className="mt-2 text-red-400">{errors.email}</Text>
           ) : null}
 
-          <Text className="text-slate-300 mt-4 mb-2">Password</Text>
+          <Text className="mt-4 mb-2 text-slate-300">Password</Text>
           <TextInput
             value={password}
             onChangeText={setPassword}
             secureTextEntry
             placeholder="Choose a password"
             placeholderTextColor="#94a3b8"
-            className="bg-slate-800 rounded-xl px-4 py-3 text-white"
+            className="px-4 py-3 text-white bg-slate-800 rounded-xl"
           />
           {errors.password ? (
-            <Text className="text-red-400 mt-2">{errors.password}</Text>
+            <Text className="mt-2 text-red-400">{errors.password}</Text>
           ) : null}
 
           <TouchableOpacity
             onPress={async () => await validateAndContinue()}
             activeOpacity={0.8}
-            className="mt-6 bg-white rounded-full py-3 items-center"
+            className="items-center py-3 mt-6 bg-white rounded-full"
           >
-            <Text className="text-slate-900 font-bold">Create account</Text>
+            <Text className="font-bold text-slate-900">Create account</Text>
           </TouchableOpacity>
 
-          <View className="mt-6 flex-row justify-center">
+          <View className="flex-row justify-center mt-6">
             <Text className="text-slate-400">Already have an account? </Text>
             <TouchableOpacity onPress={() => router.back()} activeOpacity={0.8}>
-              <Text className="text-white font-bold">Back to sign in</Text>
+              <Text className="font-bold text-white">Back to sign in</Text>
             </TouchableOpacity>
           </View>
         </View>

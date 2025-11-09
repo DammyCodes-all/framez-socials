@@ -8,32 +8,29 @@ export default function Layout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        // hide built-in labels; we'll render label under the icon so we can style with nativewind
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#1DA1F2", // X/Twitter accent color
+        tabBarActiveTintColor: "#1DA1F2",
         tabBarInactiveTintColor: "#9CA3AF",
         tabBarStyle: {
-          position: "absolute",
-          left: 16,
-          right: 16,
-          bottom: 16,
-          height: 72,
-          borderRadius: 999,
-          backgroundColor: "#0f172a", // dark slate feel
-          borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.04)",
+          height: 64,
+          borderTopColor: "#94a3b8",
+          paddingBottom: 12,
+          backgroundColor: "#0f172a",
+          borderTopWidth: 1,
           shadowColor: "#000",
-          shadowOpacity: 0.25,
-          shadowOffset: { width: 0, height: 6 },
-          elevation: 10,
+          shadowOpacity: 0.2,
+          shadowOffset: { width: 0, height: -4 },
         },
       }}
     >
       <Tabs.Screen
-        name="feed" // Home button maps to feed
+        name="feed"
         options={{
           tabBarIcon: ({ color, size }) => (
-            <View className="items-center" style={{ width: 64 }}>
+            <View
+              className="items-center justify-start"
+              style={{ flex: 1, paddingTop: 8 }}
+            >
               <Feather name="home" size={size ?? 20} color={color} />
               <Text className="text-[12px] mt-1" style={{ color }}>
                 Home
@@ -46,7 +43,10 @@ export default function Layout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, size }) => (
-            <View className="items-center" style={{ width: 64 }}>
+            <View
+              className="items-center justify-start"
+              style={{ flex: 1, paddingTop: 8 }}
+            >
               <Feather name="user" size={size ?? 20} color={color} />
               <Text className="text-[12px] mt-1" style={{ color }}>
                 Profile
