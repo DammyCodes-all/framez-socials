@@ -44,7 +44,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "SUPABASE_URL": "https://kztcjyyiiyzeltfjiwkj.supabase.co",
+      "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6dGNqeXlpaXl6ZWx0Zmppd2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2Mjk3MjksImV4cCI6MjA3ODIwNTcyOX0.CQf81TygEQxqMbJIvdkQiSLCr9eVv2iJAI6N0l_G40A",
+      "eas": {
+        "projectId": "4a6ce097-851f-41af-b91b-89f348fb305d"
+      }
     }
-    // "permissions" : ["Read"]
   }
 }
