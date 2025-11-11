@@ -14,9 +14,10 @@ type AuthProps = {
   initialized?: boolean;
   profile?: Profile;
   signOut?: () => void;
+  setProfileData?: (data: Profile) => void;
 };
 
-type Profile = {
+export type Profile = {
   avatar_url: string;
   username: string;
   created_at: Date;
@@ -37,14 +38,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [profile, setProfileData] = useState<Profile | undefined>(undefined);
 
   useEffect(() => {
-    let mounted = true;
-
     (async () => {
       try {
         const {
           data: { session: currentSession },
         } = await supabase.auth.getSession();
-        if (!mounted) return;
         setSession(currentSession ?? null);
         setUser(currentSession ? currentSession.user : null);
         if (currentSession?.user?.id) {
@@ -53,16 +51,15 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             .select("*")
             .eq("id", currentSession.user.id)
             .single();
-          if (!error && mounted) setProfileData(profileData as Profile);
+          if (!error) setProfileData(profileData as Profile);
         }
       } catch {
       } finally {
-        if (mounted) setInitialized(true);
+        setInitialized(true);
       }
     })();
 
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted) return;
       setSession(session ?? null);
       setUser(session ? session.user : null);
       try {
@@ -72,24 +69,20 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             .select("*")
             .eq("id", session.user.id)
             .single();
-          if (!error && mounted) setProfileData(profileData as Profile);
+          if (!error) setProfileData(profileData as Profile);
         } else {
           setProfileData(undefined);
         }
       } catch {
-        // ignore per-update errors
       } finally {
-        if (mounted) setInitialized(true);
+        setInitialized(true);
       }
     });
 
     return () => {
-      mounted = false;
       try {
         data.subscription.unsubscribe();
-      } catch {
-        // ignore unsubscribe errors
-      }
+      } catch {}
     };
   }, []);
 
@@ -104,6 +97,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     initialized,
     profile,
     signOut,
+    setProfileData,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

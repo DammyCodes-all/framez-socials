@@ -1,7 +1,7 @@
 import { Image, ImageStyle, View } from "react-native";
 
 export default function Avatar({
-  uri = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7csvPWMdfAHEAnhIRTdJKCK5SPK4cHfskow&s",
+  uri,
   size = 56,
 }: {
   uri?: string;

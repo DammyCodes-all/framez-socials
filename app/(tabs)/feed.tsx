@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   FlatList,
   ListRenderItem,
-  StatusBar,
   Text,
   TouchableOpacity,
   View,
@@ -72,11 +71,62 @@ export default function Feed() {
     fetchPosts();
   }, [fetchPosts]);
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchPosts();
-    }, [fetchPosts])
-  );
+  useEffect(() => {
+    const postChanges = supabase
+      .channel("posts_updates")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "posts",
+        },
+        async (payload) => {
+          if (payload.eventType === "INSERT") {
+            const newPost = payload.new;
+            const { data, error } = await supabase
+              .from("profiles")
+              .select("username, avatar_url")
+              .eq("id", newPost.user_id)
+              .single();
+
+            if (error) {
+              console.error("Error fetching profile:", error);
+              return;
+            }
+            setPosts((prevPosts) => [
+              {
+                id: String(newPost.id),
+                caption: newPost.caption ?? null,
+                image_url: newPost.image_url ?? null,
+                user_id: newPost.user_id ?? undefined,
+                authorName: data?.username ?? "Unknown",
+                authorAvatar: data?.avatar_url ?? null,
+                created_at: newPost.created_at,
+              },
+              ...prevPosts,
+            ]);
+          }
+          if (payload.eventType === "DELETE") {
+            const oldPost = payload.old;
+            setPosts((prevPosts) =>
+              prevPosts.filter((post) => post.id !== String(oldPost.id))
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(postChanges);
+    };
+  }, []);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchPosts();
+  //   }, [fetchPosts])
+  // );
 
   const renderItem: ListRenderItem<FeedProps> = ({ item }) => (
     <Post

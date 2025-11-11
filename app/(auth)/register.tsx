@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { supabase, uploadImage } from "@/lib/supabase";
+import { useAuth } from "@/components/context";
 
 const registerSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -30,6 +31,7 @@ export type ImageType = {
 
 export default function Register() {
   const router = useRouter();
+  const { setProfileData } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -93,6 +95,15 @@ export default function Register() {
         avatar_url: imageUrl,
         email: email,
       });
+      if (setProfileData) {
+        setProfileData({
+          username: name,
+          avatar_url: imageUrl,
+          email: email,
+          created_at: new Date(),
+        });
+      }
+
       if (profileError) throw profileError;
       else router.replace("/(tabs)/feed");
     } catch (error) {
