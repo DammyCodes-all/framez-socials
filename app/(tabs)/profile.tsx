@@ -132,12 +132,6 @@ export default function Profile() {
     };
   }, [user]);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchPosts();
-  //   }, [fetchPosts])
-  // );
-
   const renderItem: ListRenderItem<ProfilePost> = ({ item }) => (
     <Post
       authorName={item.authorName}
