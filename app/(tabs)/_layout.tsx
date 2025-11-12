@@ -2,6 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 
 function CreateTabButton({
@@ -45,6 +46,8 @@ function CreateTabButton({
 }
 
 export default function Layout() {
+  const insets = useSafeAreaInsets();
+  const bottomInset = insets.bottom ?? 0;
   return (
     <Tabs
       screenOptions={{
@@ -53,9 +56,9 @@ export default function Layout() {
         tabBarActiveTintColor: "#1DA1F2",
         tabBarInactiveTintColor: "#9CA3AF",
         tabBarStyle: {
-          height: 64,
+          height: 64 + bottomInset,
           borderTopColor: "#64748b",
-          paddingBottom: 12,
+          paddingBottom: 12 + bottomInset,
           backgroundColor: "#000000",
           borderTopWidth: 0.5,
           shadowColor: "#000",

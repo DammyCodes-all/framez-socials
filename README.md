@@ -1,50 +1,130 @@
-# Welcome to your Expo app 👋
+# Framez — social image sharing (Expo + Supabase)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A lightweight social app built with Expo (React Native + expo-router) and Supabase. It demonstrates
+authentication, profile management, image upload to Supabase Storage, and a simple feed with posts.
 
-## Get started
+This README documents how to run, configure and build the app, plus notes for the common issues you
+might encounter during development.
 
-1. Install dependencies
+## Quick start
 
-   ```bash
-   npm install
-   ```
+1.  Install dependencies
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```powershell
+npm install
+# or if you use pnpm (repo uses pnpm lockfile):
+pnpm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2.  Create a `.env` file with your Supabase values (see "Environment variables" below)
 
-## Learn more
+3.  Start the dev server
 
-To learn more about developing your project with Expo, look at the following resources:
+```powershell
+npx expo start
+# or use the npm scripts
+npm run start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+4.  Open on device/emulator from the Metro UI or use the shortcut commands:
 
-## Join the community
+```powershell
+npm run android
+npm run ios
+npm run web
+```
 
-Join our community of developers creating universal apps.
+## Project overview
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Framework: Expo (React Native), expo-router (file-based routing)
+- Backend: Supabase (auth, postgres, storage)
+- Styling: Tailwind via NativeWind
+- Storage: Supabase Storage (bucket: images)
+
+Core features implemented
+
+- Sign up / sign in with email
+- User profiles (username, avatar_url, email)
+- Create posts with caption + optional image
+- Feed of posts with author and timestamps
+
+## Environment variables
+
+Create a `.env` (not committed) in the repo root containing:
+
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-anon-or-service-role-key
+```
+
+Note: `app.config.js` injects these values into `expo.extra` at runtime so the app can access them via `Constants.expoConfig.extra` or process env during builds. Keep keys secret (don't commit them).
+
+## Important scripts
+
+- `npm run start` / `npx expo start` — start Metro dev server
+- `npm run android` / `npm run ios` / `npm run web` — start on specific platform
+- `npm run lint` — run linter
+- `npm run reset-project` — helper included by the starter (move starter code aside)
+
+The repo has a `pnpm-lock.yaml` (uses pnpm); you can use `pnpm` if you prefer.
+
+## Folder structure (important files)
+
+- `app/` — main route components (expo-router). Key routes:
+  - `app/(auth)/register.tsx`, `app/(auth)/login.tsx` — auth flows
+  - `app/(tabs)/feed.tsx` — main feed
+  - `app/(tabs)/create.tsx` — create post
+  - `app/(tabs)/profile.tsx` — user profile
+  - `app/_layout.tsx` or `(tabs)/_layout.tsx` — navigation/tab layout
+- `components/` — reusable components (Avatar, Post, Auth context)
+- `lib/supabase.ts` — Supabase client and helpers (image upload)
+- `assets/images/` — icons and splash resources
+
+## Supabase schema notes
+
+The app expects the following (common) setup in Supabase:
+
+- Table `profiles` (columns used): `id` (uuid, PK), `username`, `avatar_url`, `email`, `created_at`
+- Table `posts` (columns used): `id`, `caption`, `image_url`, `user_id` (fk to profiles.id), `created_at`
+- Storage bucket `images` for user-post and avatar uploads.
+
+When uploading images the app stores them in `images` and uses `getPublicUrl` to show them.
+
+## Building with EAS
+
+If you use EAS for builds, ensure the following are set in `app.config.js`:
+
+- `expo.android.package` — your Android package id (e.g. `com.example.app`)
+- `expo.extra.eas.projectId` — the EAS project id (if you want to pin it)
+
+Use the EAS CLI to configure and build:
+
+```powershell
+npx eas build:configure
+npx eas build --platform android --profile preview
+```
+
+If linking fails, see the troubleshooting steps in the project root or your EAS project settings.
+
+## Contributions
+
+Contributions are welcome. If you plan to make changes:
+
+- Open a PR with a clear description of the change
+- Keep UI changes isolated and add notes in this README
+
+## License
+
+This project is provided as-is. Add your license file here if needed.
+
+---
+
+If you'd like, I can also:
+
+- Add a small CONTRIBUTE.md with development notes
+- Add a script that validates the required env variables before start
+- Add a small `./scripts/check-env.js` that prints missing env vars
+
+Tell me if you'd like any of the above added.
+
+### Built with 💜 by Aluminate
